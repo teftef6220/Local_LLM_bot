@@ -1,7 +1,11 @@
 from config.config import cfg
 from llm import Language_model
+from sns.blue_sky.send_text import Sns_settings
 import torch
 import os
+
+from atproto import Client, client_utils
+from dotenv import load_dotenv
 
 
 
@@ -39,6 +43,20 @@ def main():
 
     print(args.prompt)
     print(output)
+
+    print("send to SNS ...")
+    send_to_blusky(args,output)
+
+def send_to_blusky(args,text):
+    load_dotenv() ##to env
+    if args.sns_type == "blue_sky":
+        bluesky = Sns_settings(args.sns_type)
+        bluesky = bluesky.login_to_blusky()
+
+        bluesky.send_post(args.prompt+'\n'+str(text))
+
+
+
 
 
 if __name__ == "__main__":

@@ -9,6 +9,8 @@ def cfg():
 
     parser.add_argument('--tokenizer_path',type = str, default="rinna/japanese-gpt-neox-3.6b-instruction-sft", help='model')
 
-    parser.add_argument('--prompt',type = str, default="今日の天気は？", help='model')
-    
+    parser.add_argument('--prompt',type = str, default="お母さんのことは好き？詳しく教えて？", help='model')
+
+    parser.add_argument('--sns_type',type = str, default="blue_sky", help='sns_type')
+
     return parser.parse_args()

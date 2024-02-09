@@ -3,3 +3,6 @@
 
 /__pycache__/
 /config/__pycache__/
+/sns/blue_sky/__pycache__/
+.env
+/models/result_mafuyu/
