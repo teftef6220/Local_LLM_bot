@@ -1,0 +1,7 @@
+/venv/
+/models/result_mafuyu
+requirements.txt
+
+
+/__pycache__/
+/config/__pycache__/
