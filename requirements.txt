@@ -1,0 +1,9 @@
+
+accelerate==0.21.0 
+peft==0.4.0
+transformers==4.31.0 
+trl==0.4.7
+sentencepiece
+
+bitsandbytes==0.41.1; platform_system != "Windows"
+https://github.com/jllllll/bitsandbytes-windows-webui/releases/download/wheels/bitsandbytes-0.41.1-py3-none-win_amd64.whl; platform_system == "Windows"
