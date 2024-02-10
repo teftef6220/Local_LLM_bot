@@ -108,9 +108,7 @@ def generate_reply(post_messages: t.List[LLMMessage]):
     # first = chat_completion.choices[0]
     # return first.message.content
 
-    final_prompt = f"""指示:{post_messages}
-    応答:
-    """
+    final_prompt = f"""指示:\n{post_messages}\n応答:"""
 
     input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
 

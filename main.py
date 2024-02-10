@@ -25,9 +25,7 @@ def main():
 
     test_prompt = model.prepare_prompt(prompt = args.prompt)
 
-    final_prompt = f"""指示:{test_prompt}
-    応答:
-    """
+    final_prompt = f"""指示:\n{test_prompt}\n応答:"""
 
 
     input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
@@ -41,7 +39,7 @@ def main():
 
     output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
 
-    print(args.prompt)
+    print(final_prompt)
     print(output)
 
     print("send to SNS ...")
