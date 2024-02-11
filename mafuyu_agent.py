@@ -9,13 +9,10 @@ from dotenv import load_dotenv
 
 
 
-'''
-llm に prompt を入力し, 生成されたテキストをsnsに送信する
-'''
 
 
 def main():
-    args = cfg()
+    
 
     model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
     
@@ -44,20 +41,10 @@ def main():
     print(final_prompt)
     print(output)
 
-    print("send to SNS ...")
-    send_to_blusky(args,output)
-
-def send_to_blusky(args,text):
-    load_dotenv() ##to env
-    if args.sns_type == "blue_sky":
-        bluesky = Sns_settings(args.sns_type)
-        bluesky = bluesky.login_to_blusky()
-
-        bluesky.send_post(args.prompt+'\n'+str(text))
-
 
 
 
 
 if __name__ == "__main__":
+    args = cfg()
     main()

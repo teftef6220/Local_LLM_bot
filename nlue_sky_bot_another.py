@@ -20,8 +20,6 @@ load_dotenv(verbose=True)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-
-load_dotenv()
 HANDLE =os.environ["BS_USER_NAME"]
 PASSWORD = os.environ["BS_PASSWORD"]
 
@@ -97,7 +95,7 @@ def thread_to_messages(thread: "models.AppBskyFeedGetPostThread.Response", did: 
     return messages
 
 
-def generate_reply(post_messages: t.List[LLMMessage]):
+def generate_reply(post_messages: t.List[LLMMessage] , llm_model , llm_tokenizer ):
     # <https://platform.openai.com/docs/api-reference/chat/create>
     # messages = [{"role": "system", "content": "Reply friendly in 280 characters or less. No @mentions."}]
     # messages.extend(post_messages)
@@ -108,38 +106,23 @@ def generate_reply(post_messages: t.List[LLMMessage]):
     # first = chat_completion.choices[0]
     # return first.message.content
 
-    #[{'role': 'user', 'content': '@latextex.bsky.social\u3000あなたの名前は？', 'name': 'userneme_bsky_social'}]
-    message_only = post_messages[0]['content']
-    pattern_bsky = r".*bsky\.social\s*(.*)"
-    match_bsky = re.search(pattern_bsky, message_only)
+    final_prompt = f"""指示:\n{post_messages}\n応答:"""
 
-    result_mesage = match_bsky.group(1) if match_bsky else None
+    input_ids = llm_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
 
-    if result_mesage is not None:
+    output_ids = llm_model.generate(
+        input_ids=input_ids.to(device=model.device),
+        max_length=200,
+        temperature=0.7,
+        do_sample=True,
+    )
+    output = llm_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
 
-        final_prompt = f"""指示:\n{result_mesage}\n応答:"""
-
-        print(final_prompt)
-
-        input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
-
-        output_ids = mafuyu_model.generate(
-            input_ids=input_ids.to(device=model.device),
-            max_length=200,
-            temperature=0.7,
-            do_sample=True,
-        )
-
-        output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
-
-        split_latest_texts = re.split(r"(応答:)", output)  
-        try:
-            last_response_latest = split_latest_texts[-1].rstrip("</s>")  
-        except IndexError:
-            last_response_latest = "ごめん...エラーが出たみたい..."
-
-    else:
-        last_response_latest = "ごめん...よく聞こえなかった..."
+    split_latest_texts = re.split(r"(応答:)", output)  
+    try:
+        last_response_latest = split_latest_texts[-1].rstrip("</s>")  
+    except IndexError:
+        last_response_latest = "ごめん...エラーが出たみたい..."
 
     return last_response_latest 
 
@@ -155,7 +138,7 @@ def reply_to(notification: models.AppBskyNotificationListNotifications.Notificat
         return {"root": notification.record.reply.root, "parent": parent}
 
 
-def read_notifications_and_reply(client: Client, last_seen_at: datetime = None) -> datetime:
+def read_notifications_and_reply(client: Client, llm_model , llm_tokenizer,last_seen_at: datetime = None ) -> datetime:
     logging.info(f"last_seen_at: {last_seen_at}")
     did = client.me.did
 
@@ -179,7 +162,7 @@ def read_notifications_and_reply(client: Client, last_seen_at: datetime = None) 
             continue
 
         post_messages = thread_to_messages(thread, did)
-        reply = generate_reply(post_messages)
+        reply = generate_reply(post_messages,llm_model,llm_tokenizer)
         client.send_post(text=f"{reply}", reply_to=reply_to(notification))
 
     update_seen(client, seen_at)
@@ -204,24 +187,9 @@ def login(client: Client, initial_wait: int):
 
 
 def main():
-    client = Client(base_url="https://bsky.social")
-    login(client, initial_wait=1)
-    seen_at = None
-    print("start")
-    while True:
-        try:
-            seen_at = read_notifications_and_reply(client, seen_at)
-        except Exception as e:
-            logging.exception(f"An error occurred: {e}")
-            login(client, initial_wait=60)
-        finally:
-            time.sleep(10)
 
-
-if __name__ == "__main__":
-
-    args = cfg()
-
+    #prepare models
+    print("preparing models...")
     model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
     
     model = Language_model(args, args.model_name, model_dir, args.tokenizer_path, "cuda")
@@ -230,4 +198,23 @@ if __name__ == "__main__":
 
     mafuyu_tokenizer = model.prepare_tokenizer()
 
+    #prepare client
+
+    client = Client(base_url="https://bsky.social")
+    login(client, initial_wait=1)
+    seen_at = None
+    print("starting...")
+    # main loop
+    while True:
+        try:
+            seen_at = read_notifications_and_reply(client , mafuyu_model , mafuyu_tokenizer,seen_at)
+        except Exception as e:
+            logging.exception(f"An error occurred: {e}")
+            login(client, initial_wait=60)
+        finally:
+            time.sleep(10)
+
+
+if __name__ == "__main__":
+    args = cfg()
     main()
