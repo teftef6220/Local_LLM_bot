@@ -5,9 +5,8 @@
 /config/__pycache__/
 /sns/blue_sky/__pycache__/
 .env
-/llm_models/
-!/llm_models/put_model_dir_here
-
+llm_models/*
+!/llm_models/put_llm_model_dir_here
 *.wav
 *.mp3
 
