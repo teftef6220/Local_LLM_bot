@@ -4,7 +4,11 @@ Youtube Demo Here! ⇩
 
 
 
-<div><video controls src="./assets/mafuyu_Voice.mp4" muted="false"></video></div>
+https://github.com/teftef6220/Local_LLM_bot/assets/56711067/632cf6d6-e970-49e1-b425-23b32faac793
+
+
+
+<div><video controls src="[./assets/mafuyu_Voice.mp4](https://github.com/teftef6220/Local_LLM_bot/assets/56711067/632cf6d6-e970-49e1-b425-23b32faac793)" muted="false"></video></div>
 
 
 ## Introduction
@@ -76,6 +80,10 @@ Voice_models
 ### 7. Run Voice Agent
 
 Set config in [config.py](./config.py)
+
+https://github.com/teftef6220/Local_LLM_bot/assets/56711067/e5e2af84-af2d-4c6d-812c-337b4d1fffbc
+
+
 
 ```bash
 python llm_agent.py
