@@ -2,12 +2,6 @@
 
 Youtube Demo Here! ⇩
 
-
-
-https://github.com/teftef6220/Local_LLM_bot/assets/56711067/632cf6d6-e970-49e1-b425-23b32faac793
-
-
-
 <div><video controls src="[./assets/mafuyu_Voice.mp4](https://github.com/teftef6220/Local_LLM_bot/assets/56711067/632cf6d6-e970-49e1-b425-23b32faac793)" muted="false"></video></div>
 
 
