@@ -3,8 +3,8 @@ import sys
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from config import config
-from text.japanese import text2sep_kata
+from voice_utils.config import config
+from voice_utils.text.japanese import text2sep_kata
 
 LOCAL_PATH = "ku-nlp/deberta-v2-large-japanese-char-wwm"
 

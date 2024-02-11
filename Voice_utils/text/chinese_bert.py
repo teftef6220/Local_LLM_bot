@@ -3,7 +3,7 @@ import sys
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from config import config
+from voice_utils.config import config
 
 LOCAL_PATH = "hfl/chinese-roberta-wwm-ext-large"
 

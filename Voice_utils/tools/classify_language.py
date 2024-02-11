@@ -1,7 +1,7 @@
 import regex as re
 
 try:
-    from config import config
+    from voice_utils.config import config
 
     LANGUAGE_IDENTIFICATION_LIBRARY = (
         config.webui_config.language_identification_library

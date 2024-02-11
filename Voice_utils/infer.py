@@ -1,12 +1,12 @@
 import torch
 
-import commons
-import utils
-from models import SynthesizerTrn
-from models_jp_extra import SynthesizerTrn as SynthesizerTrnJPExtra
-from text import cleaned_text_to_sequence, get_bert
-from text.cleaner import clean_text
-from text.symbols import symbols
+import voice_utils.commons as commons
+import voice_utils.utils as utils
+from voice_utils.models import SynthesizerTrn
+from voice_utils.models_jp_extra import SynthesizerTrn as SynthesizerTrnJPExtra
+from voice_utils.text import cleaned_text_to_sequence, get_bert
+from voice_utils.text.cleaner import clean_text
+from voice_utils.text.symbols import symbols
 
 
 # from common.log import logger

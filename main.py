@@ -1,4 +1,4 @@
-from config.config import cfg
+from config.all_config import get_all_args
 from llm_utiils import Language_model
 from sns.blue_sky.send_text import Sns_settings
 import torch
@@ -15,11 +15,11 @@ llm に prompt を入力し, 生成されたテキストをsnsに送信する
 
 
 def main():
-    args = cfg()
+    args = get_all_args()
 
     model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
     
-    model = Language_model(args, args.model_name, model_dir, args.tokenizer_path, "cuda")
+    model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
 
     mafuyu_model = model.prepare_models(quantization_type = "nf4",precision = torch.float16)
 
@@ -45,7 +45,7 @@ def main():
     print(output)
 
     print("send to SNS ...")
-    send_to_blusky(args,output)
+    # send_to_blusky(args,output)
 
 def send_to_blusky(args,text):
     load_dotenv() ##to env
@@ -54,8 +54,6 @@ def send_to_blusky(args,text):
         bluesky = bluesky.login_to_blusky()
 
         bluesky.send_post(args.prompt+'\n'+str(text))
-
-
 
 
 

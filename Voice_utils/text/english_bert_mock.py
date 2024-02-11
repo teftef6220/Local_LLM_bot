@@ -3,10 +3,10 @@ import sys
 import torch
 from transformers import DebertaV2Model, DebertaV2Tokenizer
 
-from config import config
+from voice_utils.config import config
 
 
-# LOCAL_PATH = "./Voice_utils/bert/deberta-v3-large"
+# LOCAL_PATH = "./voice_utils/bert/deberta-v3-large"
 LOCAL_PATH = "microsoft/deberta-v3-large"
 
 tokenizer = DebertaV2Tokenizer.from_pretrained(LOCAL_PATH)

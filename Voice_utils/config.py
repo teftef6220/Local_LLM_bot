@@ -228,13 +228,13 @@ class Translate_config:
 
 class Config:
     def __init__(self, config_path: str, path_config: dict[str, str]):
-        if not os.path.isfile(config_path) and os.path.isfile("Voice_utils/default_config.yml"):
-            shutil.copy(src="Voice_utils/default_config.yml", dst=config_path)
+        if not os.path.isfile(config_path) and os.path.isfile("voice_utils/default_config.yml"):
+            shutil.copy(src="voice_utils/default_config.yml", dst=config_path)
             print(
-                f"A configuration file {config_path} has been generated based on the default configuration file Voice_utils/default_config.yml."
+                f"A configuration file {config_path} has been generated based on the default configuration file voice_utils/default_config.yml."
             )
             print(
-                "If you have no special needs, please do not modify Voice_utils/default_config.yml."
+                "If you have no special needs, please do not modify voice_utils/default_config.yml."
             )
             # sys.exit(0)
         with open(file=config_path, mode="r", encoding="utf-8") as file:
@@ -276,7 +276,7 @@ class Config:
             # )
 
 
-with open(os.path.join("Voice_utils/configs", "paths.yml"), "r", encoding="utf-8") as f:
+with open(os.path.join("voice_utils/configs", "paths.yml"), "r", encoding="utf-8") as f:
     path_config: dict[str, str] = yaml.safe_load(f.read())
     # Should contain the following keys:
     # - dataset_root: the root directory of the dataset, default to "Data"
@@ -286,6 +286,6 @@ with open(os.path.join("Voice_utils/configs", "paths.yml"), "r", encoding="utf-8
 try:
     config = Config("config.yml", path_config)
 except (TypeError, KeyError):
-    print("Old config.yml found. Replace it with Voice_utils/default_config.yml.")
-    shutil.copy(src="Voice_utils/default_config.yml", dst="config.yml")
+    print("Old config.yml found. Replace it with voice_utils/default_config.yml.")
+    shutil.copy(src="voice_utils/default_config.yml", dst="config.yml")
     config = Config("config.yml", path_config)

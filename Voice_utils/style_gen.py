@@ -9,7 +9,7 @@ from tqdm import tqdm
 import utils
 from common.log import logger
 from common.stdout_wrapper import SAFE_STDOUT
-from config import config
+from voice_utils.config import config
 
 warnings.filterwarnings("ignore", category=UserWarning)
 from pyannote.audio import Inference, Model

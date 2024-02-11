@@ -3,7 +3,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-import commons
+import voice_utils.commons as commons
 # from common.log import logger as logging
 
 

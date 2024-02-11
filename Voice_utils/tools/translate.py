@@ -1,7 +1,7 @@
 """
 翻译api
 """
-from config import config
+from voice_utils.config import config
 
 import random
 import hashlib

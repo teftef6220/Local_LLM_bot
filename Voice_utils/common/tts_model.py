@@ -6,10 +6,10 @@ import warnings
 from gradio.processing_utils import convert_to_16_bit_wav
 from typing import Dict, List, Optional, Union
 
-import utils
-from infer import get_net_g, infer
-from models import SynthesizerTrn
-from models_jp_extra import SynthesizerTrn as SynthesizerTrnJPExtra
+import voice_utils.utils as utils
+from voice_utils.infer import get_net_g, infer
+from voice_utils.models import SynthesizerTrn
+from voice_utils.models_jp_extra import SynthesizerTrn as SynthesizerTrnJPExtra
 
 # from .log import logger
 from .constants import (

@@ -1,4 +1,4 @@
-from config.config import cfg
+from config.all_config import get_all_args
 
 import logging
 import os
@@ -220,11 +220,11 @@ def main():
 
 if __name__ == "__main__":
 
-    args = cfg()
+    args = get_all_args()
 
     model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
     
-    model = Language_model(args, args.model_name, model_dir, args.tokenizer_path, "cuda")
+    model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
 
     mafuyu_model = model.prepare_models(quantization_type = "nf4",precision = torch.float16)
 

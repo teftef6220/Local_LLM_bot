@@ -8,8 +8,8 @@ from num2words import num2words
 from transformers import AutoTokenizer
 
 # from common.log import logger
-from text import punctuation
-from text.japanese_mora_list import (
+from voice_utils.text import punctuation
+from voice_utils.text.japanese_mora_list import (
     mora_kata_to_mora_phonemes,
     mora_phonemes_to_mora_kata,
 )

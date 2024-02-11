@@ -3,16 +3,16 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-import commons
-import modules
-import attentions
-import monotonic_align
+import voice_utils.commons as commons
+import voice_utils.modules as modules
+import voice_utils.attentions as attentions
+import voice_utils.monotonic_align as monotonic_align
 
 from torch.nn import Conv1d, ConvTranspose1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
 
-from commons import init_weights, get_padding
-from text import symbols, num_tones, num_languages
+from voice_utils.commons import init_weights, get_padding
+from voice_utils.text import symbols, num_tones, num_languages
 
 
 class DurationDiscriminator(nn.Module):  # vits2
