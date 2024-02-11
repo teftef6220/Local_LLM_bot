@@ -1,8 +1,9 @@
 # Voice Agent Use Local LLM and TTS
 
-<p align="center">
-  <img src="./assets/mafuyu_Voice.mp4" width=100%>
-</p>
+
+[!['Voice Agent Use Local LLM and TTS demo'](./assets/mafuyu_Voice.jpg)](https://youtu.be/zJt-pHJE0bo)
+
+
 
 ## Introduction
 This is a sample project to demonstrate how to use local LLM and TTS in Voice Agent.
@@ -85,7 +86,7 @@ python llm_agent.py
 #### 8.1. Use Bluesky bot
 
 <p align="center">
-  <img src="./assets/bsky_bot.png" width=90%>
+  <img src="./assets/blue_sky_bot.png" width=90%>
 </p>
 
 you can mention the bot and the bot will reply to your mention.like
