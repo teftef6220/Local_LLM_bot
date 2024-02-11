@@ -108,24 +108,38 @@ def generate_reply(post_messages: t.List[LLMMessage]):
     # first = chat_completion.choices[0]
     # return first.message.content
 
-    final_prompt = f"""指示:\n{post_messages}\n応答:"""
+    #[{'role': 'user', 'content': '@latextex.bsky.social\u3000あなたの名前は？', 'name': 'userneme_bsky_social'}]
+    message_only = post_messages[0]['content']
+    pattern_bsky = r".*bsky\.social\s*(.*)"
+    match_bsky = re.search(pattern_bsky, message_only)
 
-    input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
+    result_mesage = match_bsky.group(1) if match_bsky else None
 
-    output_ids = mafuyu_model.generate(
-        input_ids=input_ids.to(device=model.device),
-        max_length=200,
-        temperature=0.7,
-        do_sample=True,
-    )
+    if result_mesage is not None:
 
-    output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
+        final_prompt = f"""指示:\n{result_mesage}\n応答:"""
 
-    split_latest_texts = re.split(r"(応答:)", output)  
-    try:
-        last_response_latest = split_latest_texts[-1].rstrip("</s>")  
-    except IndexError:
-        last_response_latest = "ごめん...エラーが出たみたい..."
+        print(final_prompt)
+
+        input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
+
+        output_ids = mafuyu_model.generate(
+            input_ids=input_ids.to(device=model.device),
+            max_length=200,
+            temperature=0.7,
+            do_sample=True,
+        )
+
+        output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
+
+        split_latest_texts = re.split(r"(応答:)", output)  
+        try:
+            last_response_latest = split_latest_texts[-1].rstrip("</s>")  
+        except IndexError:
+            last_response_latest = "ごめん...エラーが出たみたい..."
+
+    else:
+        last_response_latest = "ごめん...よく聞こえなかった..."
 
     return last_response_latest 
 
