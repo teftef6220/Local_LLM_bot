@@ -2,12 +2,14 @@
 
 Youtube Demo Here! ⇩
 
-<div><video controls src="[./assets/mafuyu_Voice.mp4](https://github.com/teftef6220/Local_LLM_bot/assets/56711067/632cf6d6-e970-49e1-b425-23b32faac793)" muted="false"></video></div>
+<div><video controls src="https://github.com/teftef6220/Local_LLM_bot/assets/56711067/753c24c6-e75e-44cf-85b4-94c0d4fcd291" muted="false"></video></div>
 
 
 ## Introduction
 This is a sample project to demonstrate how to use local LLM and TTS in Voice Agent.
 Using rinna/japanese-gpt-neox-3.6b-instruction-sft as LLM and Style-Bert-Vits-2 as TTS.
+
+
 
 ## Installation
 
