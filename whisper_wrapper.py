@@ -19,6 +19,9 @@ class KeyControlledRecorder:
         self.stream = None
         self.recording_thread = None
 
+        print("loading models...")
+        self.whisper_model = whisper.load_model(self.whisper_type)
+
 
     def start_recording(self):
         if self.is_recording:
@@ -70,11 +73,10 @@ class KeyControlledRecorder:
 
     def convert_to_text(self):
 
-        print("loading models...")
-        whisper_model = whisper.load_model(self.whisper_type)
-        result = whisper_model.transcribe(self.output_filename)
+        print("Processing Voice to Text")
+        result = self.whisper_model.transcribe(self.output_filename)
 
-        del whisper_model
+        del self.whisper_model
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()

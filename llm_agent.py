@@ -43,6 +43,26 @@ from voice_utils.common.constants import (
 )
 
 def main():
+
+    # Load LLM model
+    model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
+    llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
+    mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
+    mafuyu_tokenizer = llm_model.prepare_tokenizer()
+
+    #load TTS model
+    model_dir = args.root_dir
+    model_names = args.voice_model_names
+    model_holder = ModelHolder(model_dir, args.device) #root_dir: str, device: str
+    if len(model_names) == 0:
+        print(
+            f"Can not find models. Put models in {model_dir}."
+        )
+        sys.exit(1)
+
+    model_holder.load_model(model_names, os.path.join(model_dir, model_names, args.safetensors_name)) #model_name: str, model_path: str 
+
+
     # whisper part
     if args.use_whisper == True:
         print("use_whisper to Convert your voice")
@@ -62,14 +82,6 @@ def main():
         input_prompt = args.prompt
 
     ## llm part
-    
-    model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
-    
-    llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
-
-    mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
-
-    mafuyu_tokenizer = llm_model.prepare_tokenizer()
 
     input_prompt = llm_model.prepare_prompt(prompt = input_prompt)
 
@@ -92,19 +104,6 @@ def main():
     to_speach_text = re.sub(r"</s>$", "", output)
 
     ##voice part
-
-    model_dir = args.root_dir
-    model_names = args.voice_model_names
-    model_holder = ModelHolder(model_dir, args.device) #root_dir: str, device: str
-    
-    if len(model_names) == 0:
-        print(
-            f"Can not find models. Put models in {model_dir}."
-        )
-        sys.exit(1)
-
-    #load model
-    model_holder.load_model(model_names, os.path.join(model_dir, model_names, args.safetensors_name)) #model_name: str, model_path: str 
 
     message, (sr, audio), kata_tone_json_str =  tts_fn(
                 model_names, #model_name
