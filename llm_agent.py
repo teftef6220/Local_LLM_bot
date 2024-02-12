@@ -6,6 +6,10 @@ import sys
 import yaml
 import re
 
+# whisper part
+from whisper_wrapper import KeyControlledRecorder
+import keyboard
+
 # llm part
 from llm_utiils import Language_model
 from sns.blue_sky.send_text import Sns_settings
@@ -13,6 +17,9 @@ from sns.blue_sky.send_text import Sns_settings
 # voice part
 from atproto import Client, client_utils
 from dotenv import load_dotenv
+from scipy.io.wavfile import write
+import simpleaudio as sa
+import io
 
 # Style Bert Vits
 from voice_utils.common.tts_model import ModelHolder
@@ -36,6 +43,24 @@ from voice_utils.common.constants import (
 )
 
 def main():
+    # whisper part
+    if args.use_whisper == True:
+        print("use_whisper to Convert your voice")
+        converter = KeyControlledRecorder(args.whisper_type)
+        keyboard.on_press(converter.on_press)
+        keyboard.on_release(converter.on_release)
+        print(f"Press '{converter.key}' to start and stop recording. Press 'esc' to exit.")
+        keyboard.wait('esc')  # ESCキーで終了
+        if converter.is_recording:
+            converter.stop_recording()
+        converter.p.terminate()
+        input_prompt = converter.convert_to_text()
+        os.remove(converter.output_filename)
+
+
+    else:
+        input_prompt = args.prompt
+
     ## llm part
     
     model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
@@ -46,9 +71,9 @@ def main():
 
     mafuyu_tokenizer = llm_model.prepare_tokenizer()
 
-    test_prompt = llm_model.prepare_prompt(prompt = args.prompt)
+    input_prompt = llm_model.prepare_prompt(prompt = input_prompt)
 
-    final_prompt = f"""指示:\n{test_prompt}\n応答:"""
+    final_prompt = f"""指示:\n{input_prompt}\n応答:"""
 
     input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
 
@@ -70,8 +95,7 @@ def main():
 
     model_dir = args.root_dir
     model_names = args.voice_model_names
-
-    model_holder = ModelHolder(args.root_dir, args.device) #root_dir: str, device: str
+    model_holder = ModelHolder(model_dir, args.device) #root_dir: str, device: str
     
     if len(model_names) == 0:
         print(
@@ -109,6 +133,16 @@ def main():
     sampling_rate = 44100
     output_file = "output.wav"
     wavfile.write(output_file, sampling_rate, audio)
+
+    audio_buffer = io.BytesIO()
+    write(audio_buffer, sampling_rate, audio)
+
+    audio_buffer.seek(0)
+    
+    # simpleaudioを使ってバッファから直接再生
+    wave_obj = sa.WaveObject.from_wave_file(audio_buffer)
+    play_obj = wave_obj.play()
+    play_obj.wait_done()
 
 
 

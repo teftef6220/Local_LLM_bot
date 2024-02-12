@@ -1,6 +1,11 @@
 import argparse
 
 
+def common_args(parser):
+    
+    parser.add_argument('--use_whisper', type=bool, default="Tlue", help='use whisper or not')
+    parser.add_argument('--whisper_type', type=str, default="large", help=['small', 'medium', 'large', 'tiny',"large"])
+
 def add_llm_args(parser):
 
     '''
@@ -47,6 +52,7 @@ def add_voice_args(parser):
 
 def get_all_args():
     parser = argparse.ArgumentParser(description='共通の設定')
+    common_args(parser)
     add_llm_args(parser)
     add_voice_args(parser)
     

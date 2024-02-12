@@ -1,6 +1,8 @@
 bitsandbytes==0.41.1; platform_system != "Windows"
 https://github.com/jllllll/bitsandbytes-windows-webui/releases/download/wheels/bitsandbytes-0.41.1-py3-none-win_amd64.whl; platform_system == "Windows"
 
+git+https://github.com/openai/whisper.git
+
 accelerate==0.21.0
 aiofiles==23.2.1
 aiohttp==3.9.3
