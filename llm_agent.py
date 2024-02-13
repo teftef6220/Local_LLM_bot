@@ -45,12 +45,14 @@ from voice_utils.common.constants import (
 def main():
 
     # Load LLM model
+    print('Loading LLM model...')
     model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
     llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
     mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
     mafuyu_tokenizer = llm_model.prepare_tokenizer()
 
     #load TTS model
+    print('Loading TTS model...')
     model_dir = args.root_dir
     model_names = args.voice_model_names
     model_holder = ModelHolder(model_dir, args.device) #root_dir: str, device: str
@@ -76,26 +78,19 @@ def main():
         converter.p.terminate()
         input_prompt = converter.convert_to_text()
         os.remove(converter.output_filename)
-
-
     else:
         input_prompt = args.prompt
 
     ## llm part
-
     input_prompt = llm_model.prepare_prompt(prompt = input_prompt)
-
     final_prompt = f"""指示:\n{input_prompt}\n応答:"""
-
     input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
-
     output_ids = mafuyu_model.generate(
         input_ids=input_ids.to(device=llm_model.device),
         max_length=200,
         temperature=0.7,
         do_sample=True,
     )
-
     output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
 
     print(final_prompt)
@@ -129,12 +124,10 @@ def main():
 
         )
     
-    sampling_rate = 44100
-    output_file = "output.wav"
-    wavfile.write(output_file, sampling_rate, audio)
+    wavfile.write(args.save_audio_path, args.sampling_rate, audio)
 
     audio_buffer = io.BytesIO()
-    write(audio_buffer, sampling_rate, audio)
+    write(audio_buffer, args.sampling_rate, audio)
 
     audio_buffer.seek(0)
     
