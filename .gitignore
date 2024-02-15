@@ -17,6 +17,9 @@ llm_models/*
 
 /voice_utils/bert/
 
+llm_base_models/*
+!/llm_base_models/put_llm_base_models_here
+
 
 
 

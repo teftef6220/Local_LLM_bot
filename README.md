@@ -77,7 +77,6 @@ Voice_models
 
 Set config in [config.py](./config.py)
 
-https://github.com/teftef6220/Local_LLM_bot/assets/56711067/e5e2af84-af2d-4c6d-812c-337b4d1fffbc
 
 
 

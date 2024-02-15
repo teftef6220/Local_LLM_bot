@@ -121,7 +121,7 @@ def main():
                 False, #use_tone
                 args.speaker_name, #speaker
                 model_holder, #model_holder
-
+          
         )
     
     wavfile.write(args.save_audio_path, args.sampling_rate, audio)

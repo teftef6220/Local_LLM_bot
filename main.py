@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 
 '''
-llm に prompt を入力し, 生成されたテキストをsnsに送信する
+llm に prompt を入力し, 生成されたテキストをsnsに送信する bot です
 '''
 
 

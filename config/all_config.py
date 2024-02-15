@@ -3,7 +3,7 @@ import argparse
 
 def common_args(parser):
     
-    parser.add_argument('--use_whisper', type=bool, default="Tlue", help='use whisper or not')
+    parser.add_argument('--use_whisper', type=bool, default=False, help='use whisper or not')
     parser.add_argument('--save_audio_path', type=str, default="output.wav", help='save audio path')
     parser.add_argument('--whisper_type', type=str, default='medium', help=['small', 'medium', 'large', 'tiny',"large"])
     parser.add_argument('--sampling_rate', type=int, default=44100, help='sampling rate')
@@ -11,20 +11,22 @@ def common_args(parser):
 def add_llm_args(parser):
 
     '''
-    データの配置
+    LoRAデータの配置
     llm_models
     |
     |---model_instance_dir
         |
         |---adapter_model.bin
         |---adapter_model.json
+
+    ローカル dir から LLM を呼ぶときは huggingface path の代わりに dir path を記入してください。
     '''
 
-    parser.add_argument('--llm_model_name', type=str, default="rinna/japanese-gpt-neox-3.6b-instruction-sft", help='base model name')
-    parser.add_argument('--model_instance_dir', type=str, default="result_mafuyu", help='model instance directory')
+    parser.add_argument('--llm_model_name', type=str, default="./llm_base_models/swallow_7b", help='base model name for example "rinna/japanese-gpt-neox-3.6b-instruction-sft"')
+    parser.add_argument('--tokenizer_name', type=str, default="./llm_base_models/swallow_7b", help='base tokenizer name for example "rinna/japanese-gpt-neox-3.6b-instruction-sft"')
     parser.add_argument('--model_base_dir', type=str, default="./llm_models", help='model base directory')
-    parser.add_argument('--tokenizer_name', type=str, default="rinna/japanese-gpt-neox-3.6b-instruction-sft", help='base tokenizer name')
-    parser.add_argument('--prompt', type=str, default="あなたについて教えて？", help='prompt text')
+    parser.add_argument('--model_instance_dir', type=str, default="result_mafuyu_swallow7b", help='model instance directory')
+    parser.add_argument('--prompt', type=str, default="自己紹介して", help='prompt text')
     parser.add_argument('--sns_type', type=str, default="blue_sky", help='SNS type')
     parser.add_argument('--LLM_type', type=str, default="Local", help='LLM type')
 
