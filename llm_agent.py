@@ -7,11 +7,11 @@ import yaml
 import re
 
 # whisper part
-from whisper_wrapper import KeyControlledRecorder
+from whisper_utils.whisper_wrapper import KeyControlledRecorder
 import keyboard
 
 # llm part
-from llm_utiils import Language_model
+from llm_utils.llm_utiils import Language_model
 from sns.blue_sky.send_text import Sns_settings
 
 # voice part

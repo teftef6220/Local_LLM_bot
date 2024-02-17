@@ -9,7 +9,7 @@ import time
 import typing as t
 from datetime import datetime, timedelta, timezone
 
-from llm_utiils import Language_model
+from llm_utils.llm_utiils import Language_model
 
 # import openai
 from atproto import Client ,models

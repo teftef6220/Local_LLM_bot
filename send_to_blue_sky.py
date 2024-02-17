@@ -1,5 +1,5 @@
 from config.all_config import get_all_args
-from llm_utiils import Language_model
+from llm_utils.llm_utiils import Language_model
 from sns.blue_sky.send_text import Sns_settings
 import torch
 import os

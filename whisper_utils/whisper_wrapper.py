@@ -3,7 +3,7 @@ import pyaudio
 import wave
 import threading
 from openai import OpenAI
-import whisper
+import whisper_utils
 import gc
 import torch
 
@@ -20,7 +20,7 @@ class KeyControlledRecorder:
         self.recording_thread = None
 
         print("loading models...")
-        self.whisper_model = whisper.load_model(self.whisper_type)
+        self.whisper_model = whisper_utils.load_model(self.whisper_type)
 
 
     def start_recording(self):
