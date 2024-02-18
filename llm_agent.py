@@ -13,6 +13,7 @@ import keyboard
 # llm part
 from llm_utils.llm_utiils import Language_model
 from sns.blue_sky.send_text import Sns_settings
+from llm_utils.chatgpt_api import ChatGPTAPI
 
 # voice part
 from atproto import Client, client_utils
@@ -43,13 +44,30 @@ from voice_utils.common.constants import (
 )
 
 def main():
+    '''
+    AI agent main function
+    The process is as follows:
+    whisper  →  llm  →  TTS
 
-    # Load LLM model
-    print('Loading LLM model...')
-    model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
-    llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
-    mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
-    mafuyu_tokenizer = llm_model.prepare_tokenizer()
+    input : args
+        default : args.use_whisper = True
+                    args.use_ChatGPT = False
+    output : audio file
+
+    you can set configs in config/all_config.py
+
+    '''
+
+    #load llm model if not use ChatGPT
+    if not args.use_ChatGPT:
+        # Load local LLM model
+        print('Loading LLM model...')
+        model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
+        llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
+        mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
+        mafuyu_tokenizer = llm_model.prepare_tokenizer()
+    else: 
+        print('Loading ChatGPT model...')
 
     #load TTS model
     print('Loading TTS model...')
@@ -65,7 +83,7 @@ def main():
     model_holder.load_model(model_names, os.path.join(model_dir, model_names, args.safetensors_name)) #model_name: str, model_path: str 
 
 
-    # whisper part
+    ## whisper inference part
     if args.use_whisper == True:
         print("use_whisper to Convert your voice")
         converter = KeyControlledRecorder(args.whisper_type)
@@ -81,25 +99,29 @@ def main():
     else:
         input_prompt = args.prompt
 
-    ## llm part
-    input_prompt = llm_model.prepare_prompt(prompt = input_prompt)
-    final_prompt = f"""指示:\n{input_prompt}\n応答:"""
-    input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
-    output_ids = mafuyu_model.generate(
-        input_ids=input_ids.to(device=llm_model.device),
-        max_length=200,
-        temperature=0.7,
-        do_sample=True,
-    )
-    output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
+    ## llm inference part    
+    if args.use_ChatGPT:
+        final_prompt = input_prompt
+        chatgpt = ChatGPTAPI()
+        output = chatgpt.chat(input_prompt)
+    else:
+        input_prompt = llm_model.prepare_prompt(prompt = input_prompt)
+        final_prompt = f"""指示:\n{input_prompt}\n応答:"""
+        input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
+        output_ids = mafuyu_model.generate(
+            input_ids=input_ids.to(device=llm_model.device),
+            max_length=200,
+            temperature=0.7,
+            do_sample=True,
+        )
+        output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
 
     print(final_prompt)
     print(output)
 
     to_speach_text = re.sub(r"</s>$", "", output)
 
-    ##voice part
-
+    ## voice inference part
     message, (sr, audio), kata_tone_json_str =  tts_fn(
                 model_names, #model_name
                 os.path.join(model_dir, model_names, args.safetensors_name), #model_path
