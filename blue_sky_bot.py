@@ -117,14 +117,19 @@ def generate_reply(post_messages: t.List[LLMMessage]):
 
     if result_mesage is not None:
 
-        final_prompt = f"""指示:\n{result_mesage}\n応答:"""
+        final_prompt = llm_model.prepare_prompt(input_prompt = result_mesage)
+
+        # if "gemma" in args.llm_model_name:
+        #     final_prompt = f"""<bos><start_of_turn>user\n{result_mesage}<end_of_turn>\n<start_of_turn>model"""
+        # else:
+        #     final_prompt = f"""指示:\n{result_mesage}\n応答:"""
 
         print(final_prompt)
 
         input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
 
         output_ids = mafuyu_model.generate(
-            input_ids=input_ids.to(device=model.device),
+            input_ids=input_ids.to(device=llm_model.device),
             max_length=200,
             temperature=0.7,
             do_sample=True,
@@ -132,9 +137,10 @@ def generate_reply(post_messages: t.List[LLMMessage]):
 
         output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
 
-        split_latest_texts = re.split(r"(応答:)", output)  
+
         try:
-            last_response_latest = split_latest_texts[-1].rstrip("</s>")  
+            # split_latest_texts = re.split(r"(応答:)", output)  
+            last_response_latest = llm_model.refacter_prompt(output) 
         except IndexError:
             last_response_latest = "ごめん...エラーが出たみたい..."
 
@@ -222,12 +228,12 @@ if __name__ == "__main__":
 
     args = get_all_args()
 
-    model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
+    model_dir = os.path.join(args.lora_model_base_dir, args.model_instance_dir)
     
-    model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
+    llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
 
-    mafuyu_model = model.prepare_models(quantization_type = "nf4",precision = torch.float16)
+    mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
 
-    mafuyu_tokenizer = model.prepare_tokenizer()
+    mafuyu_tokenizer = llm_model.prepare_tokenizer()
 
     main()

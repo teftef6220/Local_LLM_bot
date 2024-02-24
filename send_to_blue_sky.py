@@ -17,23 +17,26 @@ llm に prompt を入力し, 生成されたテキストをsnsに送信する bo
 def main():
     args = get_all_args()
 
-    model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
+    model_dir = os.path.join(args.lora_model_base_dir, args.model_instance_dir)
     
-    model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
+    llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
 
-    mafuyu_model = model.prepare_models(quantization_type = "nf4",precision = torch.float16)
+    mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
 
-    mafuyu_tokenizer = model.prepare_tokenizer()
+    mafuyu_tokenizer = llm_model.prepare_tokenizer()
 
-    test_prompt = model.prepare_prompt(prompt = args.prompt)
+    final_prompt = llm_model.prepare_prompt(input_prompt = args.prompt)
 
-    final_prompt = f"""指示:\n{test_prompt}\n応答:"""
+    # if "gemma" in args.llm_model_name:
+    #     final_prompt = f"""<bos><start_of_turn>user\n{test_prompt}<end_of_turn>\n<start_of_turn>model"""
+    # else:
+    #     final_prompt = f"""指示:\n{test_prompt}\n応答:"""
 
 
     input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
 
     output_ids = mafuyu_model.generate(
-        input_ids=input_ids.to(device=model.device),
+        input_ids=input_ids.to(device=llm_model.device),
         max_length=200,
         temperature=0.7,
         do_sample=True,

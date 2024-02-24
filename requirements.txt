@@ -22,6 +22,7 @@ numba
 numpy
 pandas
 peft
+protobuf
 pillow
 pydub
 PyJWT
@@ -35,7 +36,7 @@ shellingham
 six
 sympy
 tqdm
-transformers
+transformers==4.38.1
 trl
 typer
 wsproto

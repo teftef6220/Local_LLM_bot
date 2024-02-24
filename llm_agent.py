@@ -62,7 +62,7 @@ def main():
     if not args.use_ChatGPT:
         # Load local LLM model
         print('Loading LLM model...')
-        model_dir = os.path.join(args.model_base_dir, args.model_instance_dir)
+        model_dir = os.path.join(args.lora_model_base_dir, args.model_instance_dir)
         llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
         mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
         mafuyu_tokenizer = llm_model.prepare_tokenizer()
@@ -105,8 +105,7 @@ def main():
         chatgpt = ChatGPTAPI()
         output = chatgpt.chat(input_prompt)
     else:
-        input_prompt = llm_model.prepare_prompt(prompt = input_prompt)
-        final_prompt = f"""指示:\n{input_prompt}\n応答:"""
+        final_prompt = llm_model.prepare_prompt(input_prompt = input_prompt)
         input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
         output_ids = mafuyu_model.generate(
             input_ids=input_ids.to(device=llm_model.device),
@@ -117,34 +116,60 @@ def main():
         output = mafuyu_tokenizer.decode(output_ids.tolist()[0][input_ids.size(1):])
 
     print(final_prompt)
+    print("-------------------")
     print(output)
 
-    to_speach_text = re.sub(r"</s>$", "", output)
+    to_speach_text = llm_model.refacter_prompt(output)
 
     ## voice inference part
-    message, (sr, audio), kata_tone_json_str =  tts_fn(
-                model_names, #model_name
-                os.path.join(model_dir, model_names, args.safetensors_name), #model_path
-                to_speach_text, #text_input
-                "JP", #language
-                None, #ref_audio_path
-                DEFAULT_SDP_RATIO, #sdp_ratio
-                DEFAULT_NOISE, #noise_scale
-                DEFAULT_NOISEW, #noise_scale_w
-                DEFAULT_LENGTH, #length_scale
-                DEFAULT_LINE_SPLIT, #line_split
-                DEFAULT_SPLIT_INTERVAL, #split_interval
-                None, #assist_text
-                DEFAULT_ASSIST_TEXT_WEIGHT, #assist_text_weight
-                False, #use_assist_text
-                DEFAULT_STYLE, #style
-                DEFAULT_STYLE_WEIGHT, #style_weight
-                None, #tone
-                False, #use_tone
-                args.speaker_name, #speaker
-                model_holder, #model_holder
-          
-        )
+    try:
+        message, (sr, audio), kata_tone_json_str =  tts_fn(
+                    model_names, #model_name
+                    os.path.join(model_dir, model_names, args.safetensors_name), #model_path
+                    to_speach_text, #text_input
+                    "JP", #language
+                    None, #ref_audio_path
+                    DEFAULT_SDP_RATIO, #sdp_ratio
+                    DEFAULT_NOISE, #noise_scale
+                    DEFAULT_NOISEW, #noise_scale_w
+                    DEFAULT_LENGTH, #length_scale
+                    DEFAULT_LINE_SPLIT, #line_split
+                    DEFAULT_SPLIT_INTERVAL, #split_interval
+                    None, #assist_text
+                    DEFAULT_ASSIST_TEXT_WEIGHT, #assist_text_weight
+                    False, #use_assist_text
+                    DEFAULT_STYLE, #style
+                    DEFAULT_STYLE_WEIGHT, #style_weight
+                    None, #tone
+                    False, #use_tone
+                    args.speaker_name, #speaker
+                    model_holder, #model_holder
+            
+            )
+    except InvalidToneError:
+        to_speach_text = "ごめん...うまく聞こえなかったみたい"
+        message, (sr, audio), kata_tone_json_str =  tts_fn(
+                    model_names, #model_name
+                    os.path.join(model_dir, model_names, args.safetensors_name), #model_path
+                    to_speach_text, #text_input
+                    "JP", #language
+                    None, #ref_audio_path
+                    DEFAULT_SDP_RATIO, #sdp_ratio
+                    DEFAULT_NOISE, #noise_scale
+                    DEFAULT_NOISEW, #noise_scale_w
+                    DEFAULT_LENGTH, #length_scale
+                    DEFAULT_LINE_SPLIT, #line_split
+                    DEFAULT_SPLIT_INTERVAL, #split_interval
+                    None, #assist_text
+                    DEFAULT_ASSIST_TEXT_WEIGHT, #assist_text_weight
+                    False, #use_assist_text
+                    DEFAULT_STYLE, #style
+                    DEFAULT_STYLE_WEIGHT, #style_weight
+                    None, #tone
+                    False, #use_tone
+                    args.speaker_name, #speaker
+                    model_holder, #model_holder
+            )
     
     wavfile.write(args.save_audio_path, args.sampling_rate, audio)
 

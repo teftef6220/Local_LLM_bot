@@ -1,5 +1,4 @@
-import os
-import torch
+import re
 from datasets import load_dataset
 from transformers import (
     AutoModelForCausalLM,
@@ -11,7 +10,6 @@ from transformers import (
     logging,
 )
 from peft import LoraConfig, PeftModel
-from trl import SFTTrainer
 
 
 class Language_model():
@@ -64,6 +62,48 @@ class Language_model():
         return tokenizer
     
 
-    def prepare_prompt(self,prompt):
-        prompt = prompt
-        return prompt
+    def prepare_prompt(self,input_prompt):
+        """
+        prepare prompt for LLM model(gemma model or other model)
+        """
+        if "gemma" in self.args.llm_model_name: # if gemma model
+            final_prompt = f"""<bos><start_of_turn>user\n{input_prompt}<end_of_turn>\n<start_of_turn>model"""
+        else:
+            final_prompt = f"""指示:\n{input_prompt}\n応答:"""
+
+        return final_prompt
+    
+    def refacter_prompt(self,input_text):
+        """
+        refacter prompt for output text
+
+        # TODO:
+            maniuplate output text for each model
+            Do someones know better way to do this?
+
+            ここはあとで治す...
+            正規表現なんかいい方法ないですか？
+        """
+        if "gemma" in self.args.llm_model_name: # if gemma model
+            final_text = re.sub(r"(<end_of_turn>\n<start_of_turn>model\n\n|<eos>)", "", input_text).strip()
+
+        elif "swallow" in self.args.llm_model_name: # if swallow model
+            pattern = r"\n(.*?)</s>"
+            matches = re.findall(pattern, input_text, re.DOTALL)
+            if matches:
+                final_text = matches[-1].strip() 
+            else:
+                final_text = final_text
+
+        elif "rinna" in self.args.llm_model_name: # if rinna model
+            pattern = r"応答:(.*?)</s>"
+            matches = re.findall(pattern, input_text, re.DOTALL)
+            if matches:
+                final_text = matches[-1].strip() 
+            else:
+                final_text = final_text
+
+        else:
+            final_text = input_text
+
+        return final_text
