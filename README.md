@@ -40,9 +40,25 @@ pip install -r requirements.txt
 ```
 
 ### 4. Fine-tune LLM
-Fine-tune LLM with your data. You can use [rinna/japanese-gpt-neox-3.6b-instruction-sft](https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft) as a pretrained model.
+Fine-tune LLM with your data. 
 
-Use Colab notebook to fine-tune LLM. You can use This notebook [![this notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/16oKXPZoU8FjkmZkJyMXZam08I0KTDEqP?usp=sharing)
+Use Colab notebook to fine-tune LLM. You can use this notebook.
+
+ [![this notebook](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/16oKXPZoU8FjkmZkJyMXZam08I0KTDEqP?usp=sharing)
+
+You can use 
+
+- [rinna/japanese-gpt-neox-3.6b-instruction-sft](https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft) 
+- [rinna/japanese-gpt-neox-3.6b-instruction-sft-v2](https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft-v2)
+- [google/gemma-2b-it](https://huggingface.co/google/gemma-2b-it)
+- [google/gemma-7b-it](https://huggingface.co/google/gemma-7b-it)
+- [tokyotech-llm/Swallow-7b-instruct-hf](https://huggingface.co/tokyotech-llm/Swallow-7b-instruct-hf)
+- [tokyotech-llm/Swallow-13b-instruct-hf](https://huggingface.co/tokyotech-llm/Swallow-13b-instruct-hf)
+
+
+as a pretrained model.
+
+
 
 ### 5. Fine-tune TTS
 Fine-tune TTS with your data. You can use [Style-Bert-Vits-2](https://github.com/litagin02/Style-Bert-VITS2) as a pretrained model.
