@@ -113,8 +113,15 @@ python blue_sky_bot.py
 
 this bot can detect mentions and reply to your mentions use LLM.
 
+
+
 ## Credits
 
 - [litagin02/Style-Bert-VITS2](https://github.com/litagin02/Style-Bert-VITS2)  
 
-- [rinna/japanese-gpt-neox-3.6b-instruction-sft](https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft)
+- [fishaudio/Bert-VITS2](https://github.com/fishaudio/Bert-VITS2)
+
+## License
+
+This project is licensed under the Affero General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
