@@ -103,7 +103,7 @@ def main():
     if args.use_ChatGPT:
         final_prompt = input_prompt
         chatgpt = ChatGPTAPI()
-        output = chatgpt.chat(input_prompt)
+        output = chatgpt.chat(input_prompt,fine_tune=args.use_finetuning_GPT)
     else:
         final_prompt = llm_model.prepare_prompt(input_prompt = input_prompt)
         input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
@@ -119,7 +119,10 @@ def main():
     print("-------------------")
     print(output)
 
-    to_speach_text = llm_model.refacter_prompt(output)
+    if args.use_ChatGPT: # if use ChatGPT
+        to_speach_text = output
+    else: # if use Local LLM
+        to_speach_text = llm_model.refacter_prompt(output)
 
     ## voice inference part
     try:

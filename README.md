@@ -91,7 +91,7 @@ Voice_models
 
 ### 7. Run Voice Agent
 
-Set config in [config.py](./config.py)
+Set config in [all_config.py](./config/all_config.py)
 
 
 

@@ -4,7 +4,8 @@ import argparse
 def common_args(parser):
     
     parser.add_argument('--use_whisper', type=bool, default=False, help='use whisper or not')
-    parser.add_argument('--use_ChatGPT', type=bool, default=False, help='use ChatGPT or not')
+    parser.add_argument('--use_ChatGPT', type=bool, default=True, help='use ChatGPT or not')
+    parser.add_argument('--use_finetuning_GPT', type=bool, default=True, help='use finetuning model or not')
     parser.add_argument('--save_audio_path', type=str, default="output.wav", help='save audio path')
     parser.add_argument('--whisper_type', type=str, default='medium', help=['small', 'medium', 'large', 'tiny',"large"])
     parser.add_argument('--sampling_rate', type=int, default=44100, help='sampling rate')
