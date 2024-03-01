@@ -3,9 +3,10 @@ import argparse
 
 def common_args(parser):
     
-    parser.add_argument('--use_whisper', type=bool, default=False, help='use whisper or not')
-    parser.add_argument('--use_ChatGPT', type=bool, default=True, help='use ChatGPT or not')
-    parser.add_argument('--use_finetuning_GPT', type=bool, default=True, help='use finetuning model or not')
+    parser.add_argument('--use_whisper', type=bool, default=True, help='use whisper or not')
+    parser.add_argument('--use_OpenAI_whisper', type=bool, default=True, help='use whisper in OpenAI API or not')
+    parser.add_argument('--use_ChatGPT', type=bool, default=False, help='use ChatGPT or not')
+    parser.add_argument('--use_finetuning_GPT', type=bool, default=False, help='use finetuning model or not')
     parser.add_argument('--save_audio_path', type=str, default="output.wav", help='save audio path')
     parser.add_argument('--whisper_type', type=str, default='medium', help=['small', 'medium', 'large', 'tiny',"large"])
     parser.add_argument('--sampling_rate', type=int, default=44100, help='sampling rate')
@@ -28,7 +29,7 @@ def add_llm_args(parser):
     parser.add_argument('--tokenizer_name', type=str, default="./llm_base_models/gemma-2b-it", help='base tokenizer name for example "rinna/japanese-gpt-neox-3.6b-instruction-sft"')
     parser.add_argument('--lora_model_base_dir', type=str, default="./llm_models", help='lora model base directory')
     parser.add_argument('--model_instance_dir', type=str, default="result_mafuyu_gemma_2b", help='model instance directory')
-    parser.add_argument('--prompt', type=str, default="あなたについて教えて", help='prompt text')
+    parser.add_argument('--prompt', type=str, default="""あなたについて教えて""", help='prompt text')
     parser.add_argument('--sns_type', type=str, default="blue_sky", help='SNS type')
     parser.add_argument('--LLM_type', type=str, default="Local", help='LLM type')
 
@@ -38,7 +39,7 @@ def add_voice_args(parser):
     データの配置
     Voice_models
     |
-    |---model_name
+    |---voice_model_names
         |
         |---model_name_e100_s2000.safetensors
         |---config.json

@@ -84,9 +84,9 @@ def main():
 
 
     ## whisper inference part
-    if args.use_whisper == True:
+    if args.use_whisper == True :
         print("use_whisper to Convert your voice")
-        converter = KeyControlledRecorder(args.whisper_type)
+        converter = KeyControlledRecorder(args.whisper_type,use_openai_whisper = args.use_OpenAI_whisper)
         keyboard.on_press(converter.on_press)
         keyboard.on_release(converter.on_release)
         print(f"Press '{converter.key}' to start and stop recording. Press 'esc' to exit.")
@@ -109,7 +109,7 @@ def main():
         input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
         output_ids = mafuyu_model.generate(
             input_ids=input_ids.to(device=llm_model.device),
-            max_length=200,
+            max_length=500,
             temperature=0.7,
             do_sample=True,
         )

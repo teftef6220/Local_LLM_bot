@@ -6,9 +6,11 @@ from openai import OpenAI
 import whisper
 import gc
 import torch
+from openai import OpenAI
+import os
 
 class KeyControlledRecorder:
-    def __init__(self,whisper_type, key='t', output_filename='temp.wav'):
+    def __init__(self,whisper_type, key='t', output_filename='temp.wav',use_openai_whisper = False):
 
         self.whisper_type = whisper_type
         self.key = key
@@ -18,9 +20,16 @@ class KeyControlledRecorder:
         self.p = pyaudio.PyAudio()
         self.stream = None
         self.recording_thread = None
+        self.use_openai_whisper = use_openai_whisper
 
-        print("loading models...")
-        self.whisper_model = whisper.load_model(self.whisper_type)
+        if self.use_openai_whisper:
+            print("-------------------OpenAI Whisper-------------------")
+            self.client = OpenAI()
+            self.api_key = os.environ["OPENAI_KEY"]
+            self.client.api_key = self.api_key
+        else:
+            print("loading models...")
+            self.whisper_model = whisper.load_model(self.whisper_type)
 
 
     def start_recording(self):
@@ -74,12 +83,26 @@ class KeyControlledRecorder:
     def convert_to_text(self):
 
         print("Processing Voice to Text")
-        result = self.whisper_model.transcribe(self.output_filename)
 
-        del self.whisper_model
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        if self.use_openai_whisper: # if use OpenAI Whisper
+            audio_file = open(self.output_filename, "rb")
+            transcription = self.client.audio.transcriptions.create(
+                    model="whisper-1", 
+                    file=audio_file
+                    )
+            audio_file.close()
+            result_text = transcription.text
+        
+        else:   # if use whisper model on local
+            result = self.whisper_model.transcribe(self.output_filename)
+            result_text = result['text']
 
-        return   result['text']
+            del self.whisper_model
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+
+
+        return   result_text
 
