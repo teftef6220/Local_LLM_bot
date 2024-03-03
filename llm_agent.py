@@ -84,7 +84,7 @@ def main():
 
 
     ## whisper inference part
-    if args.use_whisper == True :
+    if args.use_whisper == True : # if use whisper . when use whisper, you can use OpenAI whisper and see whisper_wapper.py
         print("use_whisper to Convert your voice")
         converter = KeyControlledRecorder(args.whisper_type,use_openai_whisper = args.use_OpenAI_whisper)
         keyboard.on_press(converter.on_press)

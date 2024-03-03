@@ -22,7 +22,7 @@ class KeyControlledRecorder:
         self.recording_thread = None
         self.use_openai_whisper = use_openai_whisper
 
-        if self.use_openai_whisper:
+        if self.use_openai_whisper: # if use OpenAI Whisper
             print("-------------------OpenAI Whisper-------------------")
             self.client = OpenAI()
             self.api_key = os.environ["OPENAI_KEY"]
