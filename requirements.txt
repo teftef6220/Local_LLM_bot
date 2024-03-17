@@ -5,6 +5,7 @@ git+https://github.com/openai/whisper.git
 
 accelerate
 anyio
+anthropic
 atproto
 audioread
 click

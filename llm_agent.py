@@ -14,6 +14,7 @@ import keyboard
 from llm_utils.llm_utiils import Language_model
 from sns.blue_sky.send_text import Sns_settings
 from llm_utils.chatgpt_api import ChatGPTAPI
+from llm_utils.claude_api import ClaudeAPI
 
 # voice part
 from atproto import Client, client_utils
@@ -59,15 +60,18 @@ def main():
     '''
 
     #load llm model if not use ChatGPT
-    if not args.use_ChatGPT:
-        # Load local LLM model
+    
+    if args.use_ChatGPT: # if use ChatGPT
+        print('Loading ChatGPT model...')
+    elif args.use_claude_3: # if use Claude 3
+        print('Loading Claude 3 model...')
+    else: # if use Local LLM
         print('Loading LLM model...')
         model_dir = os.path.join(args.lora_model_base_dir, args.model_instance_dir)
         llm_model = Language_model(args, args.llm_model_name, model_dir, args.tokenizer_name, "cuda")
         mafuyu_model = llm_model.prepare_models(quantization_type = "nf4",precision = torch.float16)
         mafuyu_tokenizer = llm_model.prepare_tokenizer()
-    else: 
-        print('Loading ChatGPT model...')
+        
 
     #load TTS model
     print('Loading TTS model...')
@@ -104,6 +108,10 @@ def main():
         final_prompt = input_prompt
         chatgpt = ChatGPTAPI()
         output = chatgpt.chat(input_prompt,fine_tune=args.use_finetuning_GPT)
+    elif args.use_claude_3:
+        final_prompt = input_prompt
+        claude3 = ClaudeAPI()
+        output = claude3.chat(input_prompt)
     else:
         final_prompt = llm_model.prepare_prompt(input_prompt = input_prompt)
         input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
@@ -120,6 +128,8 @@ def main():
     print(output)
 
     if args.use_ChatGPT: # if use ChatGPT
+        to_speach_text = output
+    elif args.use_claude_3: # if use Claude 3
         to_speach_text = output
     else: # if use Local LLM
         to_speach_text = llm_model.refacter_prompt(output)
