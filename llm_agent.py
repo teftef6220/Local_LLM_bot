@@ -6,6 +6,11 @@ import sys
 import yaml
 import re
 
+# Database
+from DB.database import Database 
+import datetime
+from sqlalchemy.orm import sessionmaker, scoped_session
+
 # whisper part
 from whisper_utils.whisper_wrapper import KeyControlledRecorder
 import keyboard
@@ -195,6 +200,11 @@ def main():
     wave_obj = sa.WaveObject.from_wave_file(audio_buffer)
     play_obj = wave_obj.play()
     play_obj.wait_done()
+
+    #save in database
+    db = Database('sqlite:///DB/chat_sessions.db')
+
+    db.add_session(args.speaker_name,datetime.datetime.now(),args.use_whisper,args.llm_model_name,input_prompt,output)
 
 
 

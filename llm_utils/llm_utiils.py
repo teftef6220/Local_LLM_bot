@@ -95,7 +95,7 @@ class Language_model():
             else:
                 final_text = final_text
 
-        elif "rinna" in self.args.llm_model_name: # if rinna model
+        elif "rinnna" in self.args.llm_model_name: # if rinna model
             pattern = r"応答:(.*?)</s>"
             matches = re.findall(pattern, input_text, re.DOTALL)
             if matches:
