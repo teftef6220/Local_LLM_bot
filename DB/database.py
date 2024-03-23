@@ -51,12 +51,27 @@ class Database:
         user = self.session.query(User).filter_by(speaker_id = speaker_id,session_id=session_id).first()
         return user
     
+    def get_memory(self,speaker_id,memory_num):
+        latest_session_id = self.session.query(User).filter_by(speaker_id=speaker_id).count()
+        question = []
+        answer = []
+
+        for id in range(latest_session_id,latest_session_id-memory_num,-1):
+            user = self.session.query(User).filter_by(speaker_id = speaker_id,session_id=id).first()
+            if user:
+                question.append(user.question)
+                answer.append(user.answer)
+
+
+        return question,answer
+    
     # def update_session(self,speaker_id,session_id,time_stamp,context):
     #     user = self.session.query(User).filter_by(speaker_id = speaker_id,session_id=session_id).first()
     #     if user:
     #         user.time_stamp = time_stamp
     #         user.context = context
     #         self.session.commit()
+
 
     def fetch_all_sessions(self):
         sessions = self.session.query(User).all()

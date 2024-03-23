@@ -49,6 +49,16 @@ from voice_utils.common.constants import (
     Languages,
 )
 
+db = Database('sqlite:///DB/chat_sessions.db')
+
+def prepare_memory(args,memory_num):
+    memory_prompt = ""
+    print("fetching data from DB")
+    question_l,answer_l = db.get_memory(args.speaker_name,memory_num)
+    for idx , answer_txt in enumerate(answer_l):
+        memory_prompt += f"\n{question_l[idx]}\n{answer_txt}"
+    return memory_prompt
+
 def main():
     '''
     AI agent main function
@@ -108,17 +118,24 @@ def main():
     else:
         input_prompt = args.prompt
 
+
+    if args.use_Memory: # if use Memory
+        memory_prompt = prepare_memory(args,2)
+    else:
+        memory_prompt = ""
+
     ## llm inference part    
     if args.use_ChatGPT:
-        final_prompt = input_prompt
+        final_prompt = f"{memory_prompt}\n{input_prompt}"
         chatgpt = ChatGPTAPI()
-        output = chatgpt.chat(input_prompt,fine_tune=args.use_finetuning_GPT)
+        output = chatgpt.chat(final_prompt,fine_tune=args.use_finetuning_GPT)
     elif args.use_claude_3:
-        final_prompt = input_prompt
+        final_prompt = f"{memory_prompt}\n{input_prompt}"
         claude3 = ClaudeAPI()
-        output = claude3.chat(input_prompt)
+        output = claude3.chat(final_prompt)
     else:
-        final_prompt = llm_model.prepare_prompt(input_prompt = input_prompt)
+        local_llm_prompt = llm_model.prepare_prompt(input_prompt = input_prompt)
+        final_prompt = f"{memory_prompt}\n{local_llm_prompt}"
         input_ids = mafuyu_tokenizer.encode(final_prompt, add_special_tokens=False, return_tensors="pt")
         output_ids = mafuyu_model.generate(
             input_ids=input_ids.to(device=llm_model.device),
@@ -202,7 +219,7 @@ def main():
     play_obj.wait_done()
 
     #save in database
-    db = Database('sqlite:///DB/chat_sessions.db')
+    
 
     db.add_session(args.speaker_name,datetime.datetime.now(),args.use_whisper,args.llm_model_name,input_prompt,output)
 

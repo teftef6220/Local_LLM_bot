@@ -96,12 +96,12 @@ class Language_model():
                 final_text = final_text
 
         elif "rinnna" in self.args.llm_model_name: # if rinna model
-            pattern = r"応答:(.*?)</s>"
+            pattern = r"応答:(.*?)</s>" or r"(.*?)</s>"
             matches = re.findall(pattern, input_text, re.DOTALL)
             if matches:
                 final_text = matches[-1].strip() 
             else:
-                final_text = final_text
+                final_text = input_text
 
         else:
             final_text = input_text
