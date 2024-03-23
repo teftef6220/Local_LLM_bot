@@ -56,7 +56,7 @@ class Database:
         question = []
         answer = []
 
-        for id in range(latest_session_id,latest_session_id-memory_num,-1):
+        for id in range(latest_session_id-memory_num+1,latest_session_id+1):
             user = self.session.query(User).filter_by(speaker_id = speaker_id,session_id=id).first()
             if user:
                 question.append(user.question)

@@ -96,12 +96,16 @@ class Language_model():
                 final_text = final_text
 
         elif "rinnna" in self.args.llm_model_name: # if rinna model
-            pattern = r"応答:(.*?)</s>" or r"(.*?)</s>"
-            matches = re.findall(pattern, input_text, re.DOTALL)
-            if matches:
-                final_text = matches[-1].strip() 
+            response_pattern = re.search(r'応答:(.*?)</s>', input_text)
+            # 見つかった場合、その部分を返す
+            if response_pattern:
+                final_text =  response_pattern.group(1).strip()
+            
+            # "応答:"がない場合、最初から"</s>"までのテキストを返す
             else:
-                final_text = input_text
+                first_part_pattern = re.search(r'^(.*?)</s>', input_text)
+                if first_part_pattern:
+                    final_text =  first_part_pattern.group(1).strip()
 
         else:
             final_text = input_text

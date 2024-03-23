@@ -28,11 +28,13 @@ class KeyControlledRecorder:
             self.api_key = os.environ["OPENAI_KEY"]
             self.client.api_key = self.api_key
         else:
-            print("loading models...")
+            print("loading Whisper models...")
             self.whisper_model = whisper.load_model(self.whisper_type)
 
 
     def start_recording(self):
+        self.p = pyaudio.PyAudio() # instance of PyAudio recall これをいちいち定義する必要がある。そうしないとstreamできない
+
         if self.is_recording:
             return
         print("Recording...")
@@ -71,6 +73,7 @@ class KeyControlledRecorder:
         wf.writeframes(b''.join(self.frames))
         wf.close()
         print(f"File saved: {self.output_filename}")
+        # self.p.terminate()
 
     def on_press(self, event):
         if event.name == self.key:
@@ -97,10 +100,10 @@ class KeyControlledRecorder:
             result = self.whisper_model.transcribe(self.output_filename)
             result_text = result['text']
 
-            del self.whisper_model
-            gc.collect()
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            # del self.whisper_model
+            # gc.collect()
+            # if torch.cuda.is_available():
+            #     torch.cuda.empty_cache()
 
 
 
