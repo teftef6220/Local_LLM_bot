@@ -11,6 +11,7 @@ audioread
 click
 cn2an
 colorama
+discord
 g2p-en
 gradio
 jieba
