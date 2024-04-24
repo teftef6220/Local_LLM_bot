@@ -4,6 +4,11 @@ Youtube Demo Here! ⇩
 
 <div><video controls src="https://github.com/teftef6220/Local_LLM_bot/assets/56711067/753c24c6-e75e-44cf-85b4-94c0d4fcd291" muted="false"></video></div>
 
+Japanese Demo Her!  ⇩
+
+<div><video controls src="https://github.com/teftef6220/Local_LLM_bot/assets/56711067/c77870e0-0509-46e8-bb38-26cb84c23662" muted="false"></video></div>
+
+
 
 ## Introduction
 This is a sample project to demonstrate how to use local LLM and TTS in Voice Agent.
